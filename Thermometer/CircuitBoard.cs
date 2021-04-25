@@ -1,4 +1,4 @@
-namespace Simulation3d
+namespace Thermometer
 {
     /// <summary>
     /// Provides functionality for rotating 3D model and setting its 

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Simulation3d
+namespace Thermometer
 {
     /// <summary>
     /// A base class for the singleton design pattern.

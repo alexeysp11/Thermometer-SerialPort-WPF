@@ -5,7 +5,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Diagnostics;
 
-namespace Simulation3d
+namespace Thermometer
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

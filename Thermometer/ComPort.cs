@@ -4,7 +4,7 @@ using System.Windows.Media;
 using System.Windows.Documents; 
 using System.IO.Ports;
 
-namespace Simulation3d
+namespace Thermometer
 {
     /// <summary>
     /// Implements COM-port. 
