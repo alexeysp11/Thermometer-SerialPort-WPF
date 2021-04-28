@@ -28,7 +28,7 @@ Click [here](Docs/DataTransmission.md) to read full information on how to config
 
 In order to download this repository, just type into console the following command: 
 ```
-git clone https://github.com/alexeysp11/Stm32Project
+git clone https://github.com/alexeysp11/Thermometer-SerialPort-WPF
 ```
 
 Then just open main directory using any text editor and just edit code. 
