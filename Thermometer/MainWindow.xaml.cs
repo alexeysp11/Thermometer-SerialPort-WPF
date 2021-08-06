@@ -16,7 +16,7 @@ namespace Thermometer
         /// <summary>
         /// Instance that stores all values measured by MCU. 
         /// </summary>
-        private CircuitBoard _CurcuitBoard = null; 
+        private TempSensor _CurcuitBoard = null; 
         /// <summary>
         /// Instance that implements serial port. 
         /// </summary>
@@ -73,7 +73,7 @@ namespace Thermometer
         {
             InitializeComponent();
 
-            _CurcuitBoard = new CircuitBoard();
+            _CurcuitBoard = new TempSensor();
             _ComPort = new ComPort(InfoLabel, ref _CurcuitBoard);
 
             KeyboardShortcutLabel.Content = KeyboardShortcutModes.Simulation;
@@ -126,20 +126,15 @@ namespace Thermometer
         {
             if (this.IsSimulation)  // Do nothing if it's a simualtion mode. 
             {
-                System.Windows.MessageBox.Show("Unable to refresh COM-ports in simulation mode.");
+                System.Windows.MessageBox.Show("Unable to refresh COM-ports in simulation mode.", "Exception");
                 return; 
             }
 
             // Refresh only when COM-port is not connected. 
             if (!_ComPort.IsConnected)
             {
-                // Not to copy one COM port multiple times. 
-                ComPortsComboBox.Items.Clear();
-
-                // `ComPort.Ports` is the array of COM ports. 
+                ComPortsComboBox.Items.Clear();     // Not to copy one COM port multiple times. 
                 string[] arrayOfPorts = ComPort.Ports;
-
-                // Create new instances of COM ports. 
                 for (int i = 0; i < arrayOfPorts.Length; i++)
                 {
                     ComPortsComboBox.Items.Add(arrayOfPorts[i]); 
@@ -181,7 +176,7 @@ namespace Thermometer
         {
             if (this.IsSimulation)  // Do nothing if it's a simulation mode. 
             {
-                System.Windows.MessageBox.Show("Unable to connect COM-ports in simulation mode.");
+                System.Windows.MessageBox.Show("Unable to connect COM-ports in simulation mode.", "Exception");
                 return; 
             }
 
@@ -201,7 +196,7 @@ namespace Thermometer
                 }
                 catch (System.Exception ex)
                 {
-                    GraphWPF.Exceptions.DisplayException(ex); 
+                    System.Windows.MessageBox.Show($"Exception: {ex}", "Exception");; 
                 }
             }
             else
@@ -225,7 +220,7 @@ namespace Thermometer
                 }
                 catch (System.Exception ex)
                 {
-                    GraphWPF.Exceptions.DisplayException(ex); 
+                    System.Windows.MessageBox.Show($"Exception: {ex}", "Exception");; 
                 }
             }
         }
@@ -241,7 +236,7 @@ namespace Thermometer
             {
                 if (_ComPort.IsConnected)
                 {
-                    System.Console.WriteLine("Unable to change mode while COM-port is connected.");
+                    System.Console.WriteLine("Unable to change mode while COM-port is connected.", "Exception");
                     return;
                 }
                 else
@@ -270,7 +265,6 @@ namespace Thermometer
             {
                 _CurcuitBoard.SetTemperature(_CurcuitBoard.GetTemperature() - 1.0f);
             }
-
             myCanvas.Focus();
         }
         #endregion  // Keyboard handling

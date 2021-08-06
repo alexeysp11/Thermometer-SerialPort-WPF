@@ -32,7 +32,7 @@ So in the `ComPort.Config()` method you can configure COM port as follows:
             }
             catch (System.Exception ex)
             {
-                GraphWPF.Exceptions.DisplayException(ex);
+                System.Windows.MessageBox.Show($"Exception: {ex}", "Exception");;
             }
         }
 ```
@@ -57,7 +57,7 @@ In this method `comBuffer` array is created for storing received data (this arra
             }
             catch (System.Exception ex)
             {
-                GraphWPF.Exceptions.DisplayException(ex); 
+                System.Windows.MessageBox.Show($"Exception: {ex}", "Exception");; 
             }
         }
 ```

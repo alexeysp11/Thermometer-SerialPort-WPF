@@ -26,10 +26,10 @@ namespace Thermometer
         /// </summary>
         private object Obj;
         /// <summary>
-        /// An instance of CircuitBoard that helps to change its state directly 
+        /// An instance of TempSensor that helps to change its state directly 
         /// from this class. 
         /// </summary>
-        private CircuitBoard _CurcuitBoard = null; 
+        private TempSensor _CurcuitBoard = null; 
         #endregion  // Members
 
         #region Properties
@@ -57,9 +57,9 @@ namespace Thermometer
         /// Notification label where to display messages.
         /// </param>
         /// <param name="board">
-        /// Instance of CircuitBoard (passed by reference).
+        /// Instance of TempSensor (passed by reference).
         /// </param>
-        public ComPort(Label InfoLabel, ref CircuitBoard board)
+        public ComPort(Label InfoLabel, ref TempSensor board)
         {
             // Assign `comPort` as an object of `SerialPort` class. 
             comPort = new SerialPort();
@@ -116,7 +116,7 @@ namespace Thermometer
             }
             catch (System.Exception ex)
             {
-                GraphWPF.Exceptions.DisplayException(ex);
+                System.Windows.MessageBox.Show($"Exception: {ex}", "Exception");;
             }
         }
 
@@ -156,7 +156,7 @@ namespace Thermometer
             catch (System.Exception ex)
             {
                 //System.Windows.MessageBox.Show("ERROR: " + ex.Message + "\n" + ex.GetType().ToString());
-                GraphWPF.Exceptions.DisplayException(ex);
+                System.Windows.MessageBox.Show($"Exception: {ex}", "Exception");;
                 return false;
             }
         }
@@ -184,7 +184,7 @@ namespace Thermometer
             }
             catch (System.Exception ex)
             {
-                GraphWPF.Exceptions.DisplayException(ex);
+                System.Windows.MessageBox.Show($"Exception: {ex}", "Exception");;
                 return false;
             }
         }
@@ -216,7 +216,7 @@ namespace Thermometer
             }
             catch (Exception ex)
             {
-                GraphWPF.Exceptions.DisplayException(ex);
+                System.Windows.MessageBox.Show($"Exception: {ex}", "Exception");;
             }
         }
 
@@ -246,7 +246,7 @@ namespace Thermometer
             }
             catch (System.Exception ex)
             {
-                GraphWPF.Exceptions.DisplayException(ex); 
+                System.Windows.MessageBox.Show($"Exception: {ex}", "Exception");; 
             }
         }
         #endregion  // DataTransmission

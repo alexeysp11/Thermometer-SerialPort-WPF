@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\User\\Desktop\\university\\CsharpCpp\\Thermometer\\Thermometer\\Thermometer.csproj": {}
+    "C:\\Users\\User\\Desktop\\projects\\Thermometer-SerialPort-WPF\\Thermometer\\Thermometer.csproj": {}
   },
   "projects": {
-    "C:\\Users\\User\\Desktop\\university\\CsharpCpp\\Thermometer\\Thermometer\\Thermometer.csproj": {
+    "C:\\Users\\User\\Desktop\\projects\\Thermometer-SerialPort-WPF\\Thermometer\\Thermometer.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\User\\Desktop\\university\\CsharpCpp\\Thermometer\\Thermometer\\Thermometer.csproj",
+        "projectUniqueName": "C:\\Users\\User\\Desktop\\projects\\Thermometer-SerialPort-WPF\\Thermometer\\Thermometer.csproj",
         "projectName": "Thermometer",
-        "projectPath": "C:\\Users\\User\\Desktop\\university\\CsharpCpp\\Thermometer\\Thermometer\\Thermometer.csproj",
+        "projectPath": "C:\\Users\\User\\Desktop\\projects\\Thermometer-SerialPort-WPF\\Thermometer\\Thermometer.csproj",
         "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\User\\Desktop\\university\\CsharpCpp\\Thermometer\\Thermometer\\obj\\",
+        "outputPath": "C:\\Users\\User\\Desktop\\projects\\Thermometer-SerialPort-WPF\\Thermometer\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config",

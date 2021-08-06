@@ -45,8 +45,9 @@
             <Label Name="KeyboardShortcutLabel" HorizontalAlignment="Left" Margin="550,75" VerticalAlignment="Top" Foreground="Black" Height="100" Width="200" />
             
             <!--Temperature.-->
-            <Label Content="TEMPERATURE (Celcius):" HorizontalAlignment="Left" Margin="10,270" VerticalAlignment="Top" Foreground="Black" Height="30"/>
-            <Label Name="TemperatureLabel" Content="0" HorizontalAlignment="Left" Margin="10,285" VerticalAlignment="Top" Foreground="Black" Height="25"/>
+            <Label Content="TEMPERATURE:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,270" Foreground="Black" Height="30"/>
+            <Label Name="TemperatureLabel" Content="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,285" Foreground="Black" Height="25" Width="35" />
+            <Label Content="°C" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="35,285" Foreground="Black" Height="25" Width="25" />
 
             <!--Notification label.-->
             <Label Name="InfoLabel" HorizontalAlignment="Left" Margin="10,380" VerticalAlignment="Top" Foreground="Black" Height="25" Width="350" />
