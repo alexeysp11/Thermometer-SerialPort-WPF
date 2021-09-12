@@ -1,4 +1,9 @@
 .vs
 .vscode 
+*/.vs
+*/.vscode
+
+*/bin
+*/obj
 
 Docs/ProcessDocs 

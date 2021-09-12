@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Threading; 
 using System.Diagnostics;
 
 namespace Thermometer
@@ -13,23 +14,11 @@ namespace Thermometer
     public partial class MainWindow : Window
     {
         #region Members
-        /// <summary>
-        /// Instance that stores all values measured by MCU. 
-        /// </summary>
-        private TempSensor _CurcuitBoard = null; 
-        /// <summary>
-        /// Instance that implements serial port. 
-        /// </summary>
-        private ComPort _ComPort = null; 
-        /// <summary>
-        /// This timer is used for updating labels for displaying rotation
-        /// angle, acceleration and temperature in the current moment. 
-        /// </summary>
-        private System.Windows.Threading.DispatcherTimer updateLabelsTimer = null; 
-        /// <summary>
-        /// This timer is used to timely clear InfoLabel (notification label). 
-        /// </summary>
-        private System.Windows.Threading.DispatcherTimer clearInfoLabelTimer = null; 
+        private TempSensor TempSensor = new TempSensor(); 
+        private ComPort ComPort = null; 
+
+        private DispatcherTimer updateLabelsTimer = null; 
+        private DispatcherTimer clearInfoLabelTimer = null; 
         /// <summary>
         /// Stopwatch (for displaying execution time). 
         /// </summary>
@@ -37,34 +26,17 @@ namespace Thermometer
         #endregion  // Members
 
         #region Properties
-        /// <summary>
-        /// Allows to handle if it's simulation mode or measuring mode. 
-        /// </summary>
         private bool IsSimulation = true; 
         /// <summary>
         /// Variable that stores name of connected COM-port for preventing 
         /// change of COM-port while it's connected. 
         /// </summary>
         private string ComPortText = null; 
-        /// <summary>
-        /// Execution time in the current moment. 
-        /// </summary>
-        private string currentTime = string.Empty;  
-        /// <summary>
-        /// Initial point for mercury line (zero Celcius degrees). 
-        /// </summary>
+        private string currentTime = string.Empty; 
+
         private const double MercuryLineInitPoint = 250; 
-        /// <summary>
-        /// Step for thermometer values. 
-        /// </summary>
         private float ThermometerStep = 5.0f; 
-        /// <summary>
-        /// Maximum temperature thermometer can measure. 
-        /// </summary>
         private float MaxTemperature = 45.0f; 
-        /// <summary>
-        /// Minimum temperature thermometer can measure. 
-        /// </summary>
         private float MinTemperature = -10.0f; 
         #endregion  // Properties
 
@@ -73,16 +45,13 @@ namespace Thermometer
         {
             InitializeComponent();
 
-            _CurcuitBoard = new TempSensor();
-            _ComPort = new ComPort(InfoLabel, ref _CurcuitBoard);
+            this.ComPort = new ComPort(InfoLabel, ref this.TempSensor);
 
             KeyboardShortcutLabel.Content = KeyboardShortcutModes.Simulation;
             
-            // updateLabelsTimer starts when window is loaded and updates 
-            // every 100 ms. 
+            // updateLabelsTimer starts when window is loaded and updates every n ms. 
             updateLabelsTimer = new System.Windows.Threading.DispatcherTimer();
             updateLabelsTimer.Tick += (sender, args) => {
-                // Display execution time.
                 if (sw.IsRunning)   
                 {  
                     TimeSpan ts = sw.Elapsed;  
@@ -92,7 +61,7 @@ namespace Thermometer
                 }
 
                 // Get, draw and display temperature. 
-                float temperature = _CurcuitBoard.GetTemperature(); 
+                float temperature = this.TempSensor.GetTemperature(); 
                 if (temperature <= this.MaxTemperature && temperature >= this.MinTemperature)
                 {
                     Mercury.Y2 = MercuryLineInitPoint - (temperature * ThermometerStep); 
@@ -105,7 +74,7 @@ namespace Thermometer
             // or Disconnect, then it stops. 
             clearInfoLabelTimer = new System.Windows.Threading.DispatcherTimer();
             clearInfoLabelTimer.Tick += (sender, args) => {
-                InfoLabel.Content = ""; 
+                InfoLabel.Content = string.Empty; 
                 clearInfoLabelTimer.Stop();
             };
             clearInfoLabelTimer.Interval = TimeSpan.FromSeconds(3);
@@ -119,19 +88,16 @@ namespace Thermometer
         #endregion  // Constructors
 
         #region UI buttons handling
-        /// <summary>
-        /// If Refresh button was pressed, get all available COM-ports.  
-        /// </summary>
         private void RefreshBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (this.IsSimulation)  // Do nothing if it's a simualtion mode. 
+            if (this.IsSimulation) 
             {
                 System.Windows.MessageBox.Show("Unable to refresh COM-ports in simulation mode.", "Exception");
                 return; 
             }
 
             // Refresh only when COM-port is not connected. 
-            if (!_ComPort.IsConnected)
+            if (!this.ComPort.IsConnected)
             {
                 ComPortsComboBox.Items.Clear();     // Not to copy one COM port multiple times. 
                 string[] arrayOfPorts = ComPort.Ports;
@@ -146,10 +112,6 @@ namespace Thermometer
             }
         }
 
-        /// <summary>
-        /// Disable DropDown when COM-port is already selected, and enable 
-        /// DropDown when COM-port is not selected. 
-        /// </summary>
         private void ComPortsComboBox_DropDownOpened(object sender, EventArgs e)
         {
             ComboBox cb = sender as ComboBox;
@@ -164,17 +126,9 @@ namespace Thermometer
             }
         }
 
-        /// <summary>
-        /// Connects or disconnects selected COM-port and changes content of 
-        /// a button that was pressed (from `Connect` to `Disconnect` and 
-        /// vica versa). 
-        /// </summary>
-        /// <exception cref="System.Exception">
-        /// Thrown when an instance of `ComPort` class is not created. 
-        /// </exception>
         private void ConnectDisconnectBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (this.IsSimulation)  // Do nothing if it's a simulation mode. 
+            if (this.IsSimulation) 
             {
                 System.Windows.MessageBox.Show("Unable to connect COM-ports in simulation mode.", "Exception");
                 return; 
@@ -182,11 +136,11 @@ namespace Thermometer
 
             clearInfoLabelTimer.Start();    // Start timer for updating labels. 
 
-            if (_ComPort.IsConnected)
+            if (this.ComPort.IsConnected)
             {
                 try
                 {
-                    _ComPort.Close();
+                    this.ComPort.Close();
                     this.ComPortText = null; 
                     ConnectDisconnectBtn.Content = "Connect"; 
                     if (sw.IsRunning)  
@@ -203,12 +157,12 @@ namespace Thermometer
             {
                 try
                 {
-                    _ComPort.Config(ComPortsComboBox.Text);
-                    _ComPort.Open();
+                    this.ComPort.Config(ComPortsComboBox.Text);
+                    this.ComPort.Open();
                     this.ComPortText = ComPortsComboBox.Text; 
 
                     // Change label only if COM-port is connected. 
-                    if (_ComPort.IsConnected)
+                    if (this.ComPort.IsConnected)
                     {
                         ConnectDisconnectBtn.Content = "Close"; 
                         
@@ -226,15 +180,11 @@ namespace Thermometer
         }
         #endregion  // UI buttons handling
 
-        #region Keyboard handling
-        /// <summary>
-        /// If user pressed some key. 
-        /// </summary>
         private void KeyUp_Handling(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.M)         // Change mode (from simulation to measuring and vica versa). 
             {
-                if (_ComPort.IsConnected)
+                if (this.ComPort.IsConnected)
                 {
                     System.Console.WriteLine("Unable to change mode while COM-port is connected.", "Exception");
                     return;
@@ -259,14 +209,13 @@ namespace Thermometer
 
             if (e.Key == Key.W)         // Increase temperature. 
             {
-                _CurcuitBoard.SetTemperature(_CurcuitBoard.GetTemperature() + 1.0f);
+                this.TempSensor.SetTemperature(this.TempSensor.GetTemperature() + 1.0f);
             }
             else if (e.Key == Key.S)    // Decrease temperature. 
             {
-                _CurcuitBoard.SetTemperature(_CurcuitBoard.GetTemperature() - 1.0f);
+                this.TempSensor.SetTemperature(this.TempSensor.GetTemperature() - 1.0f);
             }
             myCanvas.Focus();
         }
-        #endregion  // Keyboard handling
     }
 }

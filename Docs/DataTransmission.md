@@ -83,7 +83,7 @@ Then the next 4 bytes are converted into float number, and for **temperature sen
                     if (comByte[i] == TempSensor)
                     {
                         float value = System.BitConverter.ToSingle(comByte, i+1);     // Get 4 bytes. 
-                        _CurcuitBoard.SetTemperature(value);
+                        this.TempSensor.SetTemperature(value);
                     }
                     else if (comByte[i] == AccelerometerX)
                     {

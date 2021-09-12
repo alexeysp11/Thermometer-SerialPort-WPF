@@ -40,10 +40,5 @@ In order to open `Thermometer` application with Visual Studio, just open `Thermo
 If you are not using Visual Studio, you can run `Thermometer` using *Windows command line*. 
 So just write the following command into console: 
 ```
-simulate.cmd
-```
-
-In order to run `Thermometer` without building, write: 
-```
-simulate.cmd --no-build
+run.cmd
 ```

@@ -6,101 +6,31 @@ using System.IO.Ports;
 
 namespace Thermometer
 {
-    /// <summary>
-    /// Implements COM-port. 
-    /// </summary>
     public class ComPort
     {
-        #region Members
-        /// <summary>
-        /// An instance of `SerialPort` class. 
-        /// </summary>
-        protected SerialPort comPort = null;    
-        /// <summary>
-        /// An instance of `Label` to display message. 
-        /// </summary>
-        protected Label _InfoLabel = null; 
-        /// <summary>
-        /// Represents the System.Object type, which is the root type in the C# class hierarchy. 
-        /// Used when there's no way to identify the object type at compile time. 
-        /// </summary>
-        private object Obj;
-        /// <summary>
-        /// An instance of TempSensor that helps to change its state directly 
-        /// from this class. 
-        /// </summary>
-        private TempSensor _CurcuitBoard = null; 
-        #endregion  // Members
+        protected SerialPort comPort = new SerialPort(); 
+        private TempSensor TempSensor = null; 
+        protected Label InfoLabel = null; 
+        private object Obj = new object();
 
-        #region Properties
-        /// <summary>
-        /// Public static field of string elements that represent COM-port. 
-        /// </summary>
         public static string[] Ports { get { return SerialPort.GetPortNames(); } }
-        /// <summary>
-        /// Stores boolean value that represents if COM-port is connected or not. 
-        /// </summary>
         public bool IsConnected { get; private set; }
-        /// <summary>
-        /// Size of a packet for getting one floating point value via 
-        /// data transmission. 
-        /// </summary>
         private static int PacketSize = 6; 
-        #endregion  // Properties
 
-        #region Constructors
-        /// <summary>
-        /// Constructor of class `ComPort` that creates an object of 
-        /// `SerialPort` class. 
-        /// </summary>
-        /// <param name="InfoLabel">
-        /// Notification label where to display messages.
-        /// </param>
-        /// <param name="board">
-        /// Instance of TempSensor (passed by reference).
-        /// </param>
-        public ComPort(Label InfoLabel, ref TempSensor board)
+        public ComPort(Label infoLabel, ref TempSensor tempSensor)
         {
-            // Assign `comPort` as an object of `SerialPort` class. 
-            comPort = new SerialPort();
-            _CurcuitBoard = board;
+            this.TempSensor = tempSensor;
+            InfoLabel = infoLabel;
 
-            // Assign `Label` element. 
-            _InfoLabel = InfoLabel;
-
-            /* Event `System.IO.Ports.SerialPort.DataReceived` indicates
-            that data has been received through a port represented 
-            by the SerialPort object. 
-            Delegate `SerialDataReceivedEventHandler` represents the method 
-            that will handle the DataReceived event of a SerialPort object. */
             comPort.DataReceived += new SerialDataReceivedEventHandler(DataReceived);
             
-            /* Assign `Obj` as object of class `System.Object` for using it in `lock`
-            statements. */
-            Obj = new object();
-
             IsConnected = false; 
         }
-        #endregion  // Constructors
 
         #region Port configuration
-        /// <summary>
-        /// COM port configuration. 
-        /// </summary>
-        /// <param name="portName">Name of the COM port.</param>
-        /// <param name="baudRate">Baud rate.</param>
-        /// <param name="parity">Parity selection.</param>
-        /// <param name="stopBits">Number of stop bits.</param>
-        /// <exception cref="System.Exception">
-        /// Thrown when unable to convert passed parameters in order to 
-        /// configure COM port. 
-        /// </exception>
         public void Config(string portName, string baudRate="19200", 
-            string parity="None", string stopBits="1")
+            string parity="None", string stopBitsNumber="1")
         {
-            /* Get a value indicating the open or closed status of the 
-            SerialPort object. 
-            Close serial port if it is open at the initial time. */
             if (comPort.IsOpen == true) 
             {
                 this.Close(); 
@@ -111,7 +41,7 @@ namespace Thermometer
                 comPort.PortName = portName;
                 comPort.BaudRate = Int32.Parse(baudRate);
                 comPort.Parity = (Parity)Enum.Parse(typeof(Parity), parity);
-                comPort.StopBits = (StopBits)Enum.Parse(typeof(StopBits), stopBits);
+                comPort.StopBits = (StopBits)Enum.Parse(typeof(StopBits), stopBitsNumber);
                 comPort.DataBits = 8;
             }
             catch (System.Exception ex)
@@ -120,16 +50,6 @@ namespace Thermometer
             }
         }
 
-        /// <summary>
-        /// This method is invoked by `Send()` in order to open serial port. 
-        /// </summary>
-        /// <exception cref="System.UnauthorizedAccessException">
-        /// Thrown when the operating system denies access because of an 
-        /// I/O error or a specific type of security error. 
-        /// </exception>
-        /// <exception cref="System.Exception">
-        /// Thrown when something went wrong in `ComPort.DisplayData()` method. 
-        /// </exception>
         public bool Open()
         {
             try
@@ -137,41 +57,25 @@ namespace Thermometer
                 comPort.Open();
                 this.DisplayData(Brushes.Black, "Port " + comPort.PortName + " is opened at " + DateTime.Now);
                 IsConnected = true; 
-
                 return true;
             }
             catch (System.UnauthorizedAccessException)
             {
-                // Close the serial port. 
                 comPort.Close();
                 this.DisplayData(Brushes.Black, "Port " + comPort.PortName + " is closed at " + DateTime.Now);
                 
-                // Try to open the serial port again. 
                 comPort.Open();
                 this.DisplayData(Brushes.Black, "Port " + comPort.PortName + " is opened at " + DateTime.Now);
                 IsConnected = true; 
-                
                 return true;
             }
             catch (System.Exception ex)
             {
-                //System.Windows.MessageBox.Show("ERROR: " + ex.Message + "\n" + ex.GetType().ToString());
-                System.Windows.MessageBox.Show($"Exception: {ex}", "Exception");;
+                System.Windows.MessageBox.Show($"Exception: {ex}", "Exception");
                 return false;
             }
         }
 
-        /// <summary>
-        /// This method is invoked by `ComPort.Config` method in order 
-        /// to close serial port. 
-        /// </summary>
-        /// <returns>
-        /// true if serial port has been closed, false if serial port has not 
-        /// been closed. 
-        /// </returns>
-        /// <exception cref="System.Exception">
-        /// Thrown when .
-        /// </exception>
         public bool Close()
         {
             try
@@ -190,57 +94,14 @@ namespace Thermometer
         }
         #endregion  // Port configuration
 
-        #region DataTransmission 
-        /// <summary>
-        /// Sends a message via COM-port. 
-        /// </summary>
-        /// <param name="msg">Message to be sent via serial port.</param>
-        /// <exception cref="System.Exception">
-        /// Thrown when .
-        /// </exception>
-        public void Send(string msg)
-        {
-            if (comPort.IsOpen == false)
-            {
-                this.Open();
-            }
-            
-            try
-            {
-                lock (Obj)
-                {
-                    byte[] newMsg = HexToByte(msg);
-                    comPort.Write(newMsg, 0, newMsg.Length);
-                    this.DisplayData(Brushes.Blue, ByteToHex(newMsg));
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Windows.MessageBox.Show($"Exception: {ex}", "Exception");;
-            }
-        }
-
-        /// <summary>
-        /// This method is called when event `System.IO.Ports.SerialPort.DataReceived` 
-        /// indicated that data has been received through a port represented
-        /// by the `SerialPort` object. 
-        /// </summary>
-        /// <exception cref="System.Exception">
-        /// Thrown when the calling thread cannot access the object because a different 
-        /// thread owns it.
-        /// </exception>
         private void DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             try
             {
-                /* This piece of code do not allows other threads to use COM-port 
-                until you finish to receive data completely. */
                 lock (Obj)
                 {
                     byte[] comBuffer = new byte[24];
                     comPort.Read(comBuffer, 0, comBuffer.Length);
-
-                    // Unpack receiced message. 
                     this.DecodeMeasuredData(comBuffer); 
                 }
             }
@@ -249,14 +110,8 @@ namespace Thermometer
                 System.Windows.MessageBox.Show($"Exception: {ex}", "Exception");; 
             }
         }
-        #endregion  // DataTransmission
 
         #region DataProcessing
-        /// <summary>
-        /// Converts hex to byte. 
-        /// </summary>
-        /// <param name="msg">Message to be converted into bytes.</param>
-        /// <returns>Array of bytes.</returns>
         public byte[] HexToByte(string msg)
         {
             msg = msg.Replace(" ", "");
@@ -270,11 +125,6 @@ namespace Thermometer
             return comBuffer;
         }
 
-        /// <summary>
-        /// Converts byte to hex. 
-        /// </summary>
-        /// <param name="comByte">Array of bytes.</param>
-        /// <returns>String of HEX.</returns>
         public string ByteToHex(byte[] comByte)
         {
             var builder = new System.Text.StringBuilder(comByte.Length * 3);
@@ -292,11 +142,6 @@ namespace Thermometer
         /// Decodes measured data such as temperature and relative 
         /// accelerations. 
         /// </summary>
-        /// <remarks>
-        /// When you decode a message, just set these parameters into 
-        /// Angle and Acceleration structures. 
-        /// </remarks>
-        /// <param name="comByte">Array of bytes.</param>
         private void DecodeMeasuredData(byte[] comByte)
         {
             // Bytes for sensor decoding (see dtregisters.h). 
@@ -307,14 +152,12 @@ namespace Thermometer
 
             for (int i = 0; i < comByte.Length; i++)
             {
-                /* Size of a packet is 6 bytes in the MeasuringSystem, 
-                so sensor index is every 6th. */ 
                 if (i % PacketSize == 0)     // Get what sensor sent data. 
                 {
                     if (comByte[i] == TempSensor)
                     {
                         float value = System.BitConverter.ToSingle(comByte, i+1);     // Get 4 bytes. 
-                        _CurcuitBoard.SetTemperature(value);
+                        this.TempSensor.SetTemperature(value);
                     }
                     else if (comByte[i] == AccelerometerX)
                     {
@@ -333,24 +176,15 @@ namespace Thermometer
         }
         #endregion  // DataProcessing
 
-        #region Display 
-        /// <summary> 
-        /// This method is invoked by almost every method of this class
-        /// in order to display some information into `FlowDocument`. 
-        /// </summary>
-        /// <param name="color">Foreground color for message.</param>
-        /// <param name="msg">Message to be displayed.</param>
         protected void DisplayData(Brush color, string msg)
         {
-            if (_InfoLabel != null)
+            if (InfoLabel != null)
             {
-                _InfoLabel.Dispatcher.Invoke(() => {
-                    // Change content of the label. 
-                    _InfoLabel.Content = msg; 
-                    _InfoLabel.Foreground = color; 
+                InfoLabel.Dispatcher.Invoke(() => {
+                    InfoLabel.Content = msg; 
+                    InfoLabel.Foreground = color; 
                 });
             }
         }
-        #endregion  // Display
     }
 }
