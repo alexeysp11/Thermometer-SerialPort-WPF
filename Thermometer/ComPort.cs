@@ -27,7 +27,6 @@ namespace Thermometer
             IsConnected = false; 
         }
 
-        #region Port configuration
         public void Config(string portName, string baudRate="19200", 
             string parity="None", string stopBitsNumber="1")
         {
@@ -83,7 +82,6 @@ namespace Thermometer
                 comPort.Close();
                 this.DisplayData(Brushes.Black, "Port " + comPort.PortName + " is closed at " + DateTime.Now);
                 IsConnected = false;
-
                 return true;
             }
             catch (System.Exception ex)
@@ -92,7 +90,6 @@ namespace Thermometer
                 return false;
             }
         }
-        #endregion  // Port configuration
 
         private void DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
@@ -111,70 +108,22 @@ namespace Thermometer
             }
         }
 
-        #region DataProcessing
-        public byte[] HexToByte(string msg)
-        {
-            msg = msg.Replace(" ", "");
-            byte[] comBuffer = new byte[msg.Length / 2];
-            
-            for (int i = 0; i < msg.Length / 2; i++)
-            {
-                comBuffer[i] = Convert.ToByte(msg.Substring(i * 2, 2), 16);
-            }
-            
-            return comBuffer;
-        }
-
-        public string ByteToHex(byte[] comByte)
-        {
-            var builder = new System.Text.StringBuilder(comByte.Length * 3);
-           
-            foreach (byte data in comByte)
-            {
-                builder.Append(Convert.ToString(data, 16).PadLeft(2, '0').
-                    PadRight(3, ' '));
-            }
-            
-            return builder.ToString().ToUpper();
-        }
-
-        /// <summary>
-        /// Decodes measured data such as temperature and relative 
-        /// accelerations. 
-        /// </summary>
         private void DecodeMeasuredData(byte[] comByte)
         {
-            // Bytes for sensor decoding (see dtregisters.h). 
-            byte TempSensor     = 0b00000000 | 0b00000100; 
-            byte AccelerometerX = 0b10000000 | 0b00100000; 
-            byte AccelerometerY = 0b10000000 | 0b00010000; 
-            byte AccelerometerZ = 0b10000000 | 0b00001000; 
+            byte tempSensor = 0b00000000 | 0b00000100; 
 
             for (int i = 0; i < comByte.Length; i++)
             {
-                if (i % PacketSize == 0)     // Get what sensor sent data. 
+                if (i % PacketSize == 0) 
                 {
-                    if (comByte[i] == TempSensor)
+                    if (comByte[i] == tempSensor)
                     {
                         float value = System.BitConverter.ToSingle(comByte, i+1);     // Get 4 bytes. 
                         this.TempSensor.SetTemperature(value);
                     }
-                    else if (comByte[i] == AccelerometerX)
-                    {
-                        float value = System.BitConverter.ToSingle(comByte, i+1);     // Get 4 bytes. 
-                    }
-                    else if (comByte[i] == AccelerometerY)
-                    {
-                        float value = System.BitConverter.ToSingle(comByte, i+1);     // Get 4 bytes. 
-                    }
-                    else if (comByte[i] == AccelerometerZ)
-                    {
-                        float value = System.BitConverter.ToSingle(comByte, i+1);     // Get 4 bytes. 
-                    }
                 }
             }
         }
-        #endregion  // DataProcessing
 
         protected void DisplayData(Brush color, string msg)
         {
