@@ -46,7 +46,7 @@ namespace Thermometer
             }
             catch (System.Exception ex)
             {
-                System.Windows.MessageBox.Show($"Exception: {ex}", "Exception");;
+                System.Windows.MessageBox.Show($"Exception: {ex}", "Exception");
             }
         }
 
@@ -88,7 +88,7 @@ namespace Thermometer
             }
             catch (System.Exception ex)
             {
-                System.Windows.MessageBox.Show($"Exception: {ex}", "Exception");;
+                System.Windows.MessageBox.Show($"Exception: {ex}", "Exception");
                 return false;
             }
         }
@@ -107,7 +107,7 @@ namespace Thermometer
             }
             catch (System.Exception ex)
             {
-                System.Windows.MessageBox.Show($"Exception: {ex}", "Exception");; 
+                System.Windows.MessageBox.Show($"Exception: {ex}", "Exception");
             }
         }
 

@@ -47,7 +47,7 @@ namespace Thermometer
 
             this.ComPort = new ComPort(InfoLabel, ref this.TempSensor);
 
-            KeyboardShortcutLabel.Content = KeyboardShortcutModes.Simulation;
+            KeyboardShortcutLabel.Content = KeyboardShortcutInfo.SimulationMode;
             
             // updateLabelsTimer starts when window is loaded and updates every n ms. 
             updateLabelsTimer = new System.Windows.Threading.DispatcherTimer();
@@ -198,12 +198,12 @@ namespace Thermometer
             if (this.IsSimulation)
             {
                 ModeLabel.Content = "MODE: simulation"; 
-                KeyboardShortcutLabel.Content = KeyboardShortcutModes.Simulation;
+                KeyboardShortcutLabel.Content = KeyboardShortcutInfo.SimulationMode;
             }
             else
             {
                 ModeLabel.Content = "MODE: measurement"; 
-                KeyboardShortcutLabel.Content = KeyboardShortcutModes.Measurement;
+                KeyboardShortcutLabel.Content = KeyboardShortcutInfo.MeasurementMode;
                 return; 
             }
 

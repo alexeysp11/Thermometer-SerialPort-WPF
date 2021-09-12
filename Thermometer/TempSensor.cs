@@ -1,6 +1,6 @@
 namespace Thermometer
 {
-    public class TempSensor 
+    public class TempSensor
     {
         private float Temperature = 0.0f; 
 
