@@ -1,6 +1,6 @@
 # Thermometer-SerialPort-WPF 
 
-`Thermometer-SerialPort-WPF` is a WPF application written in C# that receives temperature data from a microcontroller via serial port, and displays the data as a termometer.
+`Thermometer-SerialPort-WPF` is a WPF application written in C# that receives temperature data from a microcontroller via serial port, and displays the data as a thermometer.
 
 ## Overall description
 
